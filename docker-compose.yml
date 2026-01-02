@@ -6,9 +6,9 @@ services:
     ports:
       - "8181:8181"
     environment:
-      DATABASE_URL: jdbc:postgresql://postgres:5432/expiryguard
-      DATABASE_USERNAME: expiryguard
-      DATABASE_PASSWORD: expiryguard
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-expiryguard}
+      DATABASE_USERNAME: ${POSTGRES_USER:-expiryguard}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-expiryguard}
       MAIL_HOST: smtp.gmail.com
       MAIL_PORT: 587
       MAIL_USERNAME: ${MAIL_USERNAME}
@@ -25,13 +25,13 @@ services:
   postgres:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: expiryguard
-      POSTGRES_USER: expiryguard
-      POSTGRES_PASSWORD: expiryguard
+      POSTGRES_DB: ${POSTGRES_DB:-expiryguard}
+      POSTGRES_USER: ${POSTGRES_USER:-expiryguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-expiryguard}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U expiryguard" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-expiryguard}" ]
       interval: 10s
       timeout: 5s
       retries: 5
