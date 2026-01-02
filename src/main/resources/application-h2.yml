@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./h2data/expiryguard;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  jackson:
+    time-zone: UTC
+  h2:
+    console:
+      enabled: true
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:sanjaycbe96@gmail.com}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+logging:
+  level:
+    com.expiryguard: INFO
+
+expiryguard:
+  scheduler:
+    enabled: false
+    cron: "0 0 9 * * *"     # Default: Daily at 9 AM
+    timezone: "UTC"          # Timezone for scheduler

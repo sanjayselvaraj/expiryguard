@@ -1,0 +1,30 @@
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Java/Maven
+target/
+*.class
+*.jar
+!**/src/main/**
+!**/src/test/**
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database files
+*.db
+*.sqlite
+data/
+h2data/
+postgres_data/

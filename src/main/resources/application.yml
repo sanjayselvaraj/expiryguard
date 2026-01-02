@@ -1,0 +1,50 @@
+server:
+  port: 8181
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  jackson:
+    time-zone: UTC
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+logging:
+  level:
+    com.expiryguard: INFO
+
+expiryguard:
+  scheduler:
+    enabled: true
+    cron: ${SCHEDULER_CRON:0 0 9 * * *}   # Override with SCHEDULER_CRON env var
+    timezone: ${SCHEDULER_TIMEZONE:UTC}    # Override with SCHEDULER_TIMEZONE env var
+  webhook:
+    enabled: ${WEBHOOK_ENABLED:true}
+    slack:
+      url: ${SLACK_WEBHOOK_URL:}           # Slack incoming webhook URL
+    discord:
+      url: ${DISCORD_WEBHOOK_URL:}         # Discord webhook URL
+    generic:
+      url: ${GENERIC_WEBHOOK_URL:}         # Custom webhook endpoint (receives JSON)

@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8181:8181"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/expiryguard
+      DATABASE_USERNAME: expiryguard
+      DATABASE_PASSWORD: expiryguard
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      SCHEDULER_CRON: ${SCHEDULER_CRON:-0 0 9 * * *}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
+      WEBHOOK_ENABLED: ${WEBHOOK_ENABLED:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: expiryguard
+      POSTGRES_USER: expiryguard
+      POSTGRES_PASSWORD: expiryguard
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U expiryguard" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

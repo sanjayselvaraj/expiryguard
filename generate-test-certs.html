@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Certificate Generator for Testing</title>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+</head>
+<body>
+    <h2>Generate Test Certificates</h2>
+    <button onclick="generateCertificates()">Generate Sample Certificates</button>
+    <div id="output"></div>
+
+    <script>
+        function generateCertificates() {
+            try {
+                // Generate key pair
+                const keys = forge.pki.rsa.generateKeyPair(2048);
+                
+                // Create certificate
+                const cert = forge.pki.createCertificate();
+                cert.publicKey = keys.publicKey;
+                cert.serialNumber = '01';
+                cert.validity.notBefore = new Date();
+                cert.validity.notAfter = new Date();
+                cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
+                
+                const attrs = [{
+                    name: 'commonName',
+                    value: 'Test Certificate'
+                }, {
+                    name: 'organizationName',
+                    value: 'ExpiryGuard Test'
+                }, {
+                    name: 'countryName',
+                    value: 'US'
+                }];
+                
+                cert.setSubject(attrs);
+                cert.setIssuer(attrs);
+                cert.sign(keys.privateKey);
+                
+                // Generate PEM
+                const pemCert = forge.pki.certificateToPem(cert);
+                downloadFile('test-cert.pem', pemCert);
+                
+                // Generate DER (.cer)
+                const derCert = forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes();
+                downloadBinaryFile('test-cert.cer', derCert);
+                
+                // Generate P12 without password
+                const p12NoPass = forge.pkcs12.toPkcs12Asn1(keys.privateKey, cert, '');
+                const p12NoPassDer = forge.asn1.toDer(p12NoPass).getBytes();
+                downloadBinaryFile('test-cert-nopass.p12', p12NoPassDer);
+                
+                // Generate P12 with password "test123"
+                const p12WithPass = forge.pkcs12.toPkcs12Asn1(keys.privateKey, cert, 'test123');
+                const p12WithPassDer = forge.asn1.toDer(p12WithPass).getBytes();
+                downloadBinaryFile('test-cert-withpass.p12', p12WithPassDer);
+                
+                document.getElementById('output').innerHTML = `
+                    <h3>Files Generated:</h3>
+                    <ul>
+                        <li>test-cert.pem (PEM format)</li>
+                        <li>test-cert.cer (DER format)</li>
+                        <li>test-cert-nopass.p12 (P12 without password)</li>
+                        <li>test-cert-withpass.p12 (P12 with password "test123")</li>
+                    </ul>
+                    <p>Certificate expires: ${cert.validity.notAfter.toDateString()}</p>
+                `;
+                
+            } catch (error) {
+                document.getElementById('output').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function downloadBinaryFile(filename, content) {
+            const bytes = new Uint8Array(content.length);
+            for (let i = 0; i < content.length; i++) {
+                bytes[i] = content.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
