@@ -82,7 +82,8 @@ Example of an expiry reminder email.
 ### Prerequisites
 
 - Docker & Docker Compose
-- Gmail account with [App Password](https://support.google.com/accounts/answer/185833) (for email notifications)
+- Email account with SMTP access (Gmail, Outlook, Yahoo, or custom SMTP server)
+  - For Gmail: [App Password](https://support.google.com/accounts/answer/185833) required
 
 ### 1. Clone the repository
 
@@ -116,8 +117,10 @@ Open http://localhost:8181 and register your first account.
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `MAIL_USERNAME` | Gmail address for sending notifications | Yes |
-| `MAIL_PASSWORD` | Gmail App Password (not regular password) | Yes |
+| `MAIL_HOST` | SMTP server hostname (e.g., `smtp.gmail.com`, `smtp-mail.outlook.com`) | Yes |
+| `MAIL_PORT` | SMTP server port (typically `587` for TLS or `465` for SSL) | Yes |
+| `MAIL_USERNAME` | Email address for sending notifications | Yes |
+| `MAIL_PASSWORD` | Email password or App Password (Gmail requires App Password) | Yes |
 | `SLACK_WEBHOOK_URL` | Slack incoming webhook URL | No |
 | `DISCORD_WEBHOOK_URL` | Discord webhook URL | No |
 | `SCHEDULER_CRON` | Notification schedule (default: `0 0 9 * * *`) | No |
@@ -159,8 +162,10 @@ If you want team-wide alerts in Slack or Discord, you can optionally configure w
 
 ```bash
 # Set environment variables
-export MAIL_USERNAME=your@gmail.com
-export MAIL_PASSWORD=your-app-password
+export MAIL_HOST=smtp.gmail.com
+export MAIL_PORT=587
+export MAIL_USERNAME=your@email.com
+export MAIL_PASSWORD=your-password
 
 # Run with H2 profile
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2

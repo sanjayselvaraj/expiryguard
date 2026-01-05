@@ -9,8 +9,8 @@ services:
       DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-expiryguard}
       DATABASE_USERNAME: ${POSTGRES_USER:-expiryguard}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-expiryguard}
-      MAIL_HOST: smtp.gmail.com
-      MAIL_PORT: 587
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       SCHEDULER_CRON: ${SCHEDULER_CRON:-0 0 9 * * *}
